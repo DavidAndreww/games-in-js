@@ -1,0 +1,23 @@
+body {
+  text-align: center;
+  background-color: rgb(29, 29, 29);
+}
+#wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 35vw;
+  max-width: 400px;
+  height: 35vw;
+  max-height: 400px;
+  border: 3px solid black;
+}
+.button {
+  background-color: grey;
+  border: 1px solid rgb(204, 181, 181);
+  width: calc(20% - 2px);
+  height: calc(20% - 2px);
+}
+.active {
+  background-color: rgb(214, 54, 193);
+}
