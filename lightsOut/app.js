@@ -1,44 +1,50 @@
 // Imports 
-import { Button } from './lightClass.js'
+import { Light } from './lightClass.js'
 import { clickedPlusAdjacent, levels } from './utils.js'
 
 // Access all clickable buttons in the GUI
 const squares = document.querySelectorAll('.button')
 // Array to store and access button objects
-const buttons = []
+const lights = []
 for (let i = 1; i < 26; i++){
-  buttons.push(new Button(i, false))
+  lights.push(new Light(i, false))
 }
-// tracks active button count
+// tracks active light count
 let tally = 0
+// tracks clicks
+let clickCount = 0
 
 // Sets up gameboard on start
-levels.one.forEach(id => {
-  buttons[id - 1].toggleState()
+levels.one.lights.forEach(id => {
+  lights[id - 1].toggleState()
   squares[id - 1].classList.toggle('active')
   tally += 1
 })
 
 
 // Adds on-click feature to each button
-squares.forEach(elem => {
-  //const clickedId = parseInt(elem.id)
+squares.forEach(square => {
   
-  elem.addEventListener('click', function(elem) {
-    const clickedId = parseInt(elem.currentTarget.id)
+  square.addEventListener('click', function(square) {
+    const clickedId = parseInt(square.currentTarget.id)
     // identifies the clicked and adjacent squares to toggle
     const idsToToggle = clickedPlusAdjacent(clickedId)
     // toggles UI and state of button object
     idsToToggle.forEach(id => {
-      const buttonToToggle = buttons[id - 1]
+      const lightToToggle = lights[id - 1]
       const squareToToggle = squares[id - 1]
 
-      buttonToToggle.toggleState()
+      lightToToggle.toggleState()
       squareToToggle.classList.toggle('active')
-      tally = buttonToToggle.updateTally(tally)
+      tally = lightToToggle.updateTally(tally)
     })
-    
-    if (tally === 0) console.log('You WIN')
+    clickCount++
+    if (tally === 0) {
+      console.log('You Win!!')
+      return
+    } else if (clickCount === levels.one.attempts) {
+      console.log('Max attempts reach, you Lose!')
+    }
   })
 
 })
