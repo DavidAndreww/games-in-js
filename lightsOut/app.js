@@ -15,7 +15,7 @@ let tally = 0
 let clickCount = 0
 
 // Sets up gameboard on start
-levels.one.lights.forEach(id => {
+levels['50'].lights.forEach(id => {
   lights[id - 1].toggleState()
   squares[id - 1].classList.toggle('active')
   tally += 1
@@ -42,7 +42,7 @@ squares.forEach(square => {
     if (tally === 0) {
       console.log('You Win!!')
       return
-    } else if (clickCount === levels.one.attempts) {
+    } else if (clickCount === levels['50'].minAttempts) {
       console.log('Max attempts reach, you Lose!')
     }
   })
