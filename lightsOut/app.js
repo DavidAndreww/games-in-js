@@ -1,39 +1,49 @@
 // Imports 
 import { Light } from './lightClass.js'
-import { clickedPlusAdjacent, levels, alertMessage } from './utils.js'
+import { levels } from './gameLevels.js'
+import { clickedPlusAdjacent, alertMessage } from './utils.js'
 
-// Access all clickable light in the GUI
+// Access all clickable lights in the GUI
 const squares = document.querySelectorAll('.light')
-// element to display win/loss message
+// element to display win/loss message (diplay = none by default)
 const h2Elem = document.querySelector('h2')
-// body element - disable clicks while level loads
+// body element - disable clicks while level refreshes
 const body = document.querySelector('body')
 
-// Array to store and access button objects
+// stores button objects for state tracking
 const lights = []
 for (let i = 1; i < 26; i++){
   lights.push(new Light(i, false))
 }
-// tracks active light count
-let tally
-// tracks clicks
-let clickCount
-// current level
-let level = 1
+
+// current level active lights & click count
+let activeLightCount, clickCount
+
+// current level & attempts
+let [level, attempts] = [5,1]
+
 let winAlert = alertMessage('win')(3000)(h2Elem)
 let lossAlert = alertMessage('loss')(3000)(h2Elem)
+let hintAlert = alertMessage('hint')(5000)(h2Elem)
 
 // Sets up gameboard on start
 function startGame(level) {
-  body.style.pointerEvents = 'auto'
-  tally = 0
+  activeLightCount = 0
   clickCount = 0
-  levels[`${ level }`].lights.forEach(id => {
-    lights[id - 1].toggleState()
-    squares[id - 1].classList.toggle('active')
-    tally += 1
+  mouseAction('enable')
+  // populates gameboard with starting lights + sets activeLightCount equal to active light count
+  levels[`${level}`].startingCoords.forEach(coord => {
+    lights[coord - 1].toggleState()
+    squares[coord - 1].classList.toggle('active')
+    activeLightCount += 1
   })
 }
+
+// disable/enable mouse events while board refreshes
+function mouseAction(status){
+  body.style.pointerEvents = status === 'disable' ? "none" : "auto"
+}
+
 startGame(level)
 
 // Adds on-click feature to each button
@@ -50,26 +60,32 @@ squares.forEach(square => {
 
       lightToToggle.toggleState()
       squareToToggle.classList.toggle('active')
-      tally = lightToToggle.updateTally(tally)
+      activeLightCount = lightToToggle.changeInt(activeLightCount)
     })
     clickCount++
-    if (tally === 0) {
-      body.style.pointerEvents = 'none'
+    // If win....
+    if (activeLightCount === 0) {
+      mouseAction('disable')
       winAlert(`You Win!<br>Get ready for level ${level + 1}`)
       level++
       setTimeout(() => startGame(level), 3000)
       return
-    } else if (clickCount === levels[`${ level }`].minAttempts) {
+      // if Loss....
+    } else if (clickCount === levels[`${ level }`].maxAttempts) {
       lossAlert('Sorry, you lost. Try again?')
-      body.style.pointerEvents = 'none'
+      mouseAction('disable')
+
       setTimeout(() => {
-        for (let i = 1; i < 26; i++){
-          lights[i - 1].isActive = false
-          squares[i - 1].classList.remove('active')
-        }
+        resetBoard()
         startGame(level)
       }, 3000)
     }
   })
-
 })
+
+function resetBoard() {
+  for (let i = 1; i < 26; i++){
+    lights[i - 1].isActive = false
+    squares[i - 1].classList.remove('active')
+  }
+}
