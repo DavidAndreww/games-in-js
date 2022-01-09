@@ -16,6 +16,22 @@ export function clickedPlusAdjacent(clickedId) {
   return idsToToggle
 }
 
+export function alertMessage(status) {
+  return (time) => {
+    return (elem) => {
+      return (message) => {
+        elem.innerHTML = message
+        elem.classList.add(`alert-${status}`)
+        elem.style.left = `calc(50vw - ${elem.clientWidth / 2}px)`
+        setTimeout(function() {
+          elem.innerHTML = ''
+          elem.classList.remove(`alert-${status}`)
+        }, time)
+      }
+    }
+  }
+}
+
 export const levels = {
   1: {
     lights: [11, 13, 15],
