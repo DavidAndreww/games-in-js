@@ -7,7 +7,7 @@ export function Light(id, isActive) {
     this.isActive = !this.isActive
   }
   // modifies global variable 'activeLightCount', to track total active buttons
-  this.changeInt = function(integer) {
+  this.changeVal = function(integer) {
     return this.isActive ? integer += 1 : integer -=1
   }
 }

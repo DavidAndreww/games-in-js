@@ -1,4 +1,4 @@
-export function clickedPlusAdjacent(clickedId) {
+export const clickedPlusAdjacent = (clickedId) => {
   const idsToToggle = [clickedId]
   // values of id's that don't require left check
   const idsNotRequiringRightCheck = [1, 6, 11, 16, 21]
@@ -16,13 +16,15 @@ export function clickedPlusAdjacent(clickedId) {
   return idsToToggle
 }
 
-export function alertMessage(status) {
+export const alertMessage = (status) =>{
   return (time) => {
     return (elem) => {
       return (message) => {
+        // displays message in UI
         elem.innerHTML = message
         elem.classList.add(`alert-${status}`)
         elem.style.left = `calc(50vw - ${elem.clientWidth / 2}px)`
+        // after set time, removes message from UI
         setTimeout(function() {
           elem.innerHTML = ''
           elem.classList.remove(`alert-${status}`)

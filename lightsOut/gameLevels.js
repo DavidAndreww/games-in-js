@@ -1,4 +1,4 @@
-export const levels = {
+export const levelCatalogue = {
   1: {
     startingCoords: [11, 13, 15],
     minAttempts: 6,
