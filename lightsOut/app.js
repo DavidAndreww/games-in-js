@@ -10,6 +10,11 @@ const gameSquares = document.querySelectorAll('.light')
 const notificationBanner = document.querySelector('h2')
 const resetBtn = document.querySelector('#reset-btn')
 const hintBtn = document.querySelector('#hint-btn')
+const limitDisplay = document.querySelector('#limit-display') 
+const attemptDisplay = document.querySelector('#attempt-display') 
+const clickDisplay = document.querySelector('#click-display') 
+const levelDisplay = document.querySelector('#level-display') 
+const scoreDisplay = document.querySelector('#score-display') 
 
 // Variables for tracking state of game logic
 let [activeLightCount, clickCount, currentLevel, attempts, hintsUsedCount] = [0, 0, 1, 1, 0]
