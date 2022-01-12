@@ -82,10 +82,15 @@ const gameflow = (square) => {
   toggleSquares(idsToToggle)
 
   if (checkForWin(activeLightCount)) {
+    const minClicks = levelCatalogue[`${ currentLevel }`].minClicks
     scoreState.calculateScore(clickCount, attempts)
     currentLevel++
     mouseAction('disable')
-    winAlert(`You Win!<br>Get ready for level ${currentLevel}`)
+    if (clickCount === minClicks && attempts === 1 && hintsUsedCount === 0) {
+      winAlert(`PERFECT SCORE!<br>Get ready for level ${currentLevel}`)
+    } else {
+      winAlert(`You Win!<br>Get ready for level ${currentLevel}`)
+    }
     setTimeout(() => {
       startNewLevel()
       loadBoard(currentLevel)
