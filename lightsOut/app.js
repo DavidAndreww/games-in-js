@@ -15,9 +15,20 @@ const attemptDisplay = document.querySelector('#attempt-display')
 const clickDisplay = document.querySelector('#click-display') 
 const levelDisplay = document.querySelector('#level-display') 
 const scoreDisplay = document.querySelector('#score-display') 
+const hintDisplay = document.querySelector('#hint-display')
 
 // Variables for tracking state of game logic
-let [activeLightCount, clickCount, currentLevel, attempts, hintsUsedCount, currentScore] = [0, 0, 1, 1, 0, 0]
+let [activeLightCount, clickCount, currentLevel, attempts, hintsUsedCount] = [0, 0, 1, 1, 0]
+
+const scoreState = {
+  score: 0,
+  calculateScore: function(clickCount, attempts) {
+      this.score += 100 - 
+      (1 * (clickCount - levelCatalogue[`${ currentLevel }`].minClicks)) -
+      (5 * (attempts - 1)) -
+      (10 * hintsUsedCount)
+  }
+}
 
 // User notification messages
 let winAlert = alertMessage('win')(3000)(notificationBanner)
@@ -71,15 +82,15 @@ const gameflow = (square) => {
   toggleSquares(idsToToggle)
 
   if (checkForWin(activeLightCount)) {
+    scoreState.calculateScore(clickCount, attempts)
     currentLevel++
     mouseAction('disable')
-    winAlert(`You Win!<br>Get ready for level #${currentLevel}`)
+    winAlert(`You Win!<br>Get ready for level ${currentLevel}`)
     setTimeout(() => {
       startNewLevel()
       loadBoard(currentLevel)
       updateDisplayAfterWin()
     }, 3000)
-
   } else if (checkForLoss(clickCount)) {
     mouseAction('disable')
     lossAlert('Sorry, you lost. Try again?')
@@ -142,11 +153,16 @@ const showHint = currentLevel => {
     gameSquares[hintId - 1].classList.remove('hint')
   }, 2500)
   hintsUsedCount++
+  updateHintDisplay()
 }
 
 
 function updateClickDisplay() {
   clickDisplay.innerHTML = `Click Count:<br>${clickCount}`
+}
+
+function updateHintDisplay() {
+  hintDisplay.innerHTML = `Hints Used:<br>${hintsUsedCount} / 2`
 }
 
 
@@ -157,12 +173,15 @@ function updateDisplayAfterRestart() {
 
 
 function updateDisplayAfterWin() {
-  const minAttempts = levelCatalogue[`${ currentLevel }`].minAttempts
-  const maxAttempts = levelCatalogue[`${ currentLevel }`].maxAttempts
+  const minClicks = levelCatalogue[`${ currentLevel }`].minClicks
+  const maxClicks = levelCatalogue[`${ currentLevel }`].maxClicks
+  const totalLevels = Object.keys(levelCatalogue).length
+
   updateDisplayAfterRestart()
-  limitDisplay.innerHTML = `Min & Max<br>Clicks to Solve:<br>${minAttempts} / ${maxAttempts}`
-  levelDisplay.innerHTML = `Level:<br>${currentLevel}`
-  scoreDisplay.innerHTML = `Score:<br>${currentScore}`
+  updateHintDisplay()
+  limitDisplay.innerHTML = `Min & Max<br>Clicks to Solve:<br>${minClicks} / ${maxClicks}`
+  levelDisplay.innerHTML = `Level:<br>${currentLevel} / ${totalLevels}`
+  scoreDisplay.innerHTML = `Score:<br>${scoreState.score}`
 }
 
 
@@ -170,4 +189,4 @@ function updateDisplayAfterWin() {
 const checkForWin = activeLightCount => activeLightCount == 0 ? true : false
 
 // User loses if max clicks is reached
-const checkForLoss = clickCount => clickCount === levelCatalogue[`${ currentLevel }`].maxAttempts ? true : false
+const checkForLoss = clickCount => clickCount === levelCatalogue[`${ currentLevel }`].maxClicks ? true : false
