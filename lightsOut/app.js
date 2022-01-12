@@ -17,7 +17,7 @@ const levelDisplay = document.querySelector('#level-display')
 const scoreDisplay = document.querySelector('#score-display') 
 
 // Variables for tracking state of game logic
-let [activeLightCount, clickCount, currentLevel, attempts, hintsUsedCount] = [0, 0, 1, 1, 0]
+let [activeLightCount, clickCount, currentLevel, attempts, hintsUsedCount, currentScore] = [0, 0, 1, 1, 0, 0]
 
 // User notification messages
 let winAlert = alertMessage('win')(3000)(notificationBanner)
@@ -28,6 +28,7 @@ let hintAlert = alertMessage('hint')(3000)(notificationBanner)
 resetBtn.addEventListener('click', () => {
   clearBoard()
   loadBoard(currentLevel)
+  updateDisplayAfterRestart()
 })
 hintBtn.addEventListener('click', () => showHint(currentLevel))
 gameSquares.forEach(square => square.addEventListener('click', (square) => gameflow(square)))
@@ -39,8 +40,10 @@ for (let i = 1; i < 26; i++){
   lightObjects.push(new Light(i, false))
 }
 
-// Loads board at runtime
+// Loads board & updates displays at runtime
 loadBoard(currentLevel)
+updateDisplayAfterWin()
+
 
 function loadBoard(level) {
   // reset clickCount, activeLightCount & re-enable mouse clicks
@@ -57,13 +60,15 @@ function loadBoard(level) {
   })
 }
 
+
 // Controls game logic flow
 const gameflow = (square) => {
+  clickCount++
+  updateClickDisplay()
   const clickedId = parseInt(square.currentTarget.id)
   // identifies the clicked and adjacent squares to toggle
   const idsToToggle = clickedPlusAdjacent(clickedId)
   toggleSquares(idsToToggle)
-  clickCount++
 
   if (checkForWin(activeLightCount)) {
     currentLevel++
@@ -72,6 +77,7 @@ const gameflow = (square) => {
     setTimeout(() => {
       startNewLevel()
       loadBoard(currentLevel)
+      updateDisplayAfterWin()
     }, 3000)
 
   } else if (checkForLoss(clickCount)) {
@@ -80,9 +86,11 @@ const gameflow = (square) => {
     setTimeout(() => {
       clearBoard()
       loadBoard(currentLevel)
+      updateDisplayAfterRestart()
     }, 3000)
   }
 }
+
 
 const toggleSquares = idsToToggle => {
   // gets index of each appropriate square and light to toggle - toggles them & modifies active light count
@@ -96,15 +104,18 @@ const toggleSquares = idsToToggle => {
   })
 }
 
+
 // disable/enable mouse events according to display of win & loss alerts
 function mouseAction(status) {
   body.style.pointerEvents = status === 'disable' ? "none" : "auto"
 }
 
+
 // only executes when user completes a level
 const startNewLevel = () => {
   [attempts, hintsUsedCount ] = [1, 0]
 }
+
 
 // only executes when user loses or manually resets board
 const clearBoard = () => {
@@ -116,10 +127,11 @@ const clearBoard = () => {
   }
 }
 
+
 const showHint = currentLevel => {
   // Only 2 hints allowed
   if (hintsUsedCount === 2) {
-    hintAlert('You don\'t have any hints left!')
+    hintAlert('You\'re only allowed 2 hints per level!')
     return
   }
   // HintId accesses coord values at each index [0, 1]. Only 2 hints available to user
@@ -131,6 +143,28 @@ const showHint = currentLevel => {
   }, 2500)
   hintsUsedCount++
 }
+
+
+function updateClickDisplay() {
+  clickDisplay.innerHTML = `Click Count:<br>${clickCount}`
+}
+
+
+function updateDisplayAfterRestart() {
+  updateClickDisplay()
+  attemptDisplay.innerHTML = `Attempts:<br>${attempts}`
+}
+
+
+function updateDisplayAfterWin() {
+  const minAttempts = levelCatalogue[`${ currentLevel }`].minAttempts
+  const maxAttempts = levelCatalogue[`${ currentLevel }`].maxAttempts
+  updateDisplayAfterRestart()
+  limitDisplay.innerHTML = `Min & Max<br>Clicks to Solve:<br>${minAttempts} / ${maxAttempts}`
+  levelDisplay.innerHTML = `Level:<br>${currentLevel}`
+  scoreDisplay.innerHTML = `Score:<br>${currentScore}`
+}
+
 
 // User wins if no lights are active
 const checkForWin = activeLightCount => activeLightCount == 0 ? true : false
