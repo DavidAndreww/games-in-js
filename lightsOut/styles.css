@@ -2,6 +2,10 @@ body {
   text-align: center;
   background-color: rgb(29, 29, 29);
 }
+h1 {
+  font-size: 5vmax;
+  color: rgb(255, 255, 255);
+}
 #wrapper {
   display: flex;
   justify-content: center;
@@ -65,11 +69,11 @@ h2 {
   border: 2px solid rgb(130, 63, 192);
 }
 .hint {
-  animation: fadeIn ease 2.5s;
-  -webkit-animation: fadeIn ease 2.5s;
-  -moz-animation: fadeIn ease 2.5s;
-  -o-animation: fadeIn ease 2.5s;
-  -ms-animation: fadeIn ease 2.5s;
+  animation: fadeIn ease 1.5s;
+  -webkit-animation: fadeIn ease 1.5s;
+  -moz-animation: fadeIn ease 1.5s;
+  -o-animation: fadeIn ease 1.5s;
+  -ms-animation: fadeIn ease 1.5s;
 }
 @keyframes fadeIn {
   0% {background-color: grey;}

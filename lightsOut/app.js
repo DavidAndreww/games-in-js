@@ -98,7 +98,7 @@ const gameflow = (square) => {
     }, 3000)
   } else if (checkForLoss(clickCount)) {
     mouseAction('disable')
-    lossAlert('Sorry, you lost. Try again?')
+    lossAlert('Oops, you failed!')
     setTimeout(() => {
       clearBoard()
       loadBoard(currentLevel)
